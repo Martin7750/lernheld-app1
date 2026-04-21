@@ -1,0 +1,14 @@
+#!/bin/bash
+# Run this once in your project folder after installing sharp:
+# npm install --save-dev sharp
+# Then: node generate-icons.mjs
+
+import sharp from 'sharp';
+import { readFileSync } from 'fs';
+
+const svg = readFileSync('./public/icon.svg');
+
+await sharp(svg).resize(192, 192).png().toFile('./public/icon-192.png');
+await sharp(svg).resize(512, 512).png().toFile('./public/icon-512.png');
+
+console.log('✅ Icons generated: icon-192.png and icon-512.png');
