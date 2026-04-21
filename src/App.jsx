@@ -194,7 +194,12 @@ function StarBurst({ active }) {
 // ─── AI helpers ───────────────────────────────────────────────────────────────
 async function callClaude(messages) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST", headers: { "Content-Type": "application/json" },
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": import.meta.env.VITE_ANTHROPIC_KEY,
+      "anthropic-version": "2023-06-01",
+    },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages }),
   });
   const data = await res.json();
