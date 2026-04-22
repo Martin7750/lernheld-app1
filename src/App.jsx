@@ -193,14 +193,9 @@ function StarBurst({ active }) {
 
 // ─── AI helpers ───────────────────────────────────────────────────────────────
 async function callClaude(messages) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetch("/.netlify/functions/generate", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": import.meta.env.VITE_ANTHROPIC_KEY,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-allow-cors": "true",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages }),
   });
   const data = await res.json();
@@ -211,9 +206,14 @@ const AI_SUFFIX = `\n\nAntworte NUR mit gültigem JSON-Array (kein Markdown):
 [{"q":"Frage?","answers":["A","B","C","D"],"correct":0,"explain":"Kurze Erklärung warum A richtig ist."}]
 Erstelle genau 5 Fragen. "correct" ist der 0-basierte Index.`;
 
-async function generateFromText(text) {
-  const raw = await callClaude([{ role: "user", content: `Lernassistent für Schüler (10-18 J.). Erstelle aus diesem Text 5 Multiple-Choice-Fragen auf Deutsch mit kurzer Erklärung.\n\nTEXT:\n${text}${AI_SUFFIX}` }]);
-  return JSON.parse(raw.replace(/```json|```/g, "").trim());
+async function callClaude(messages) {
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages }),
+  });
+  const data = await res.json();
+  return data.content.map(i => i.text || "").join("");
 }
 
 async function generateFromImage(base64, mime) {
