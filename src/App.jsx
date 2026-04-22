@@ -206,15 +206,6 @@ const AI_SUFFIX = `\n\nAntworte NUR mit gültigem JSON-Array (kein Markdown):
 [{"q":"Frage?","answers":["A","B","C","D"],"correct":0,"explain":"Kurze Erklärung warum A richtig ist."}]
 Erstelle genau 5 Fragen. "correct" ist der 0-basierte Index.`;
 
-async function callClaude(messages) {
-  const res = await fetch("/api/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1500, messages }),
-  });
-  const data = await res.json();
-  return data.content.map(i => i.text || "").join("");
-}
 
 async function generateFromImage(base64, mime) {
   const raw = await callClaude([{ role: "user", content: [
